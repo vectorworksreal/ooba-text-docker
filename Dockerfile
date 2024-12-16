@@ -18,13 +18,17 @@ WORKDIR /app
 RUN git clone https://github.com/oobabooga/text-generation-webui.git .
 
 # Install Python dependencies
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt \
+    && pip3 install --no-cache-dir xformers
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV CUDA_VISIBLE_DEVICES=0
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 
 # Expose the default port
 EXPOSE 7860
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-
-# Command to run the server
+# Command to run the server with optimized parameters
 CMD ["python3", "server.py", "--listen"]
